@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>প্রিমিয়াম যাচাই</title>
+  <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right top, #1e293b, #0f172a);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #fff;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      padding: 30px 20px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .premium-icon {
+      font-size: 48px;
+      color: gold;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin: 25px 0;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .yes {
+      background: linear-gradient(to right, #22c55e, #16a34a);
+      color: white;
+    }
+
+    .yes:hover {
+      background: linear-gradient(to right, #16a34a, #15803d);
+    }
+
+    .no {
+      background: linear-gradient(to right, #ef4444, #b91c1c);
+      color: white;
+    }
+
+    .no:hover {
+      background: linear-gradient(to right, #b91c1c, #7f1d1d);
+    }
+
+    .notice {
+      font-size: 14px;
+      color: #facc15;
+      margin-top: 12px;
+    }
+
+    dotlottie-player {
+      border-radius: 16px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="premium-icon">‼️ Warning ‼️</div>
+
+    <dotlottie-player 
+      src="https://lottie.host/9bf64949-2c28-4473-803b-09947f8703a2/YZatcBBJRX.lottie" 
+      background="transparent" 
+      speed="1" 
+      style="width: 300px; height: 300px" 
+      loop autoplay>
+    </dotlottie-player>
+
+    <h2>আপনি কি আমাদের লিংক দিয়ে একাউন্ট খুলেছেন !</h2>
+
+    <div class="buttons">
+      <button class="yes" onclick="location.href='next2.html'">Yes</button>
+      <button class="no" onclick="location.href='profile.html'">No</button>
+    </div>
+
+    <p class="notice">বি:দ্র- আমাদের দেওয়া লিংক দিয়ে একাউন্ট না খুললে আপনি Free Giveaway পাবেন না</p>
+  </div>
+</body>
+</html>
