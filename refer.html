@@ -2,7 +2,6 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>প্রিমিয়াম রেফারেল প্রোগ্রাম</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
@@ -17,11 +16,10 @@
     }
     .container {
       max-width: 500px;
-      max-width: 90vw;
       margin: auto;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 20px;
-      padding: 30px 20px;
+      padding: 30px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
     }
@@ -43,14 +41,6 @@
       border: none;
       border-radius: 10px;
       font-size: 1rem;
-      user-select: all;
-      cursor: pointer;
-      background-color: rgba(255 255 255 / 0.2);
-      color: white;
-    }
-    input:focus {
-      outline: none;
-      background-color: rgba(255 255 255 / 0.3);
     }
     .button-group {
       display: flex;
@@ -61,10 +51,9 @@
     }
     .button {
       flex: 1 1 45%;
-      min-width: 140px;
       background-color: #ffffff;
       color: #2a5298;
-      padding: 10px 0;
+      padding: 10px;
       font-size: 1rem;
       border: none;
       border-radius: 10px;
@@ -74,7 +63,6 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      user-select: none;
     }
     .button:hover {
       background-color: #e0e0e0;
@@ -96,7 +84,6 @@
       font-weight: bold;
       line-height: 30px;
       transition: width 0.5s ease-in-out;
-      user-select: none;
     }
     .notice {
       background-color: #ffeaa7;
@@ -112,15 +99,30 @@
 <body>
   <div class="container">
     <div class="animation">
-      <dotlottie-player src="https://lottie.host/12a60984-e31b-437d-addb-481e3edd451f/pFIA3tjKm8.lottie" background="transparent" speed="1" style="width: 200px; height: 200px" loop autoplay></dotlottie-player>
+      <dotlottie-player
+        src="https://lottie.host/12a60984-e31b-437d-addb-481e3edd451f/pFIA3tjKm8.lottie"
+        background="transparent"
+        speed="1"
+        style="width: 200px; height: 200px"
+        loop
+        autoplay
+      ></dotlottie-player>
     </div>
     <div class="title">HGZY রেফারেল প্রোগ্রাম</div>
-    <input type="text" id="refLink" readonly title="লিংকটি কপি করতে এখানে ক্লিক করুন" onclick="this.select()" />
+    <input type="text" id="refLink" readonly />
     <div class="button-group">
-      <button class="button" onclick="shareLink('facebook')"><i class="bi bi-facebook"></i> Facebook</button>
-      <button class="button" onclick="shareLink('whatsapp')"><i class="bi bi-whatsapp"></i> WhatsApp</button>
-      <button class="button" onclick="shareLink('messenger')"><i class="bi bi-messenger"></i> Messenger</button>
-      <button class="button" onclick="copyLink()"><i class="bi bi-clipboard"></i> কপি লিংক</button>
+      <button class="button" onclick="shareLink('facebook')">
+        <i class="bi bi-facebook"></i> Facebook
+      </button>
+      <button class="button" onclick="shareLink('whatsapp')">
+        <i class="bi bi-whatsapp"></i> WhatsApp
+      </button>
+      <button class="button" onclick="shareLink('messenger')">
+        <i class="bi bi-messenger"></i> Messenger
+      </button>
+      <button class="button" onclick="copyLink()">
+        <i class="bi bi-clipboard"></i> কপি লিংক
+      </button>
     </div>
     <div class="progress-container">
       <div class="progress-bar" id="progressBar">0%</div>
@@ -138,10 +140,10 @@
       localStorage.setItem("refUserId", userId);
     }
 
-    const referralLink = `${window.location.origin}?ref=${userId}`;
-    const refInput = document.getElementById("refLink");
-    refInput.value = referralLink;
+    const referralLink = `${window.location.origin}${window.location.pathname}?ref=${userId}`;
+    document.getElementById("refLink").value = referralLink;
 
+    // শেয়ার ফাংশন
     function shareLink(platform) {
       let shareURL = "";
 
@@ -160,6 +162,7 @@
       }
     }
 
+    // কপি ফাংশন
     function copyLink() {
       navigator.clipboard.writeText(referralLink)
         .then(() => {
@@ -170,21 +173,43 @@
         });
     }
 
-    // ডামি প্রগ্রেস
-    let clicks = 0;
-    function updateProgress() {
+    // রেফারেল ভিজিট হলে প্রগ্রেস আপডেট ফাংশন
+    function incrementProgress() {
+      let clicks = parseInt(localStorage.getItem('refClicks')) || 0;
       clicks++;
-      let progress = clicks * 5;
-      if (progress > 100) progress = 100;
+      if (clicks > 20) clicks = 20;  // ২০ ক্লিক হলে ১০০%
+      localStorage.setItem('refClicks', clicks);
 
-      const progressBar = document.getElementById("progressBar");
-      progressBar.style.width = progress + "%";
-      progressBar.innerText = progress + "%";
+      const progress = clicks * 5;
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = progress + '%';
+      progressBar.innerText = progress + '%';
     }
 
-    // ডেভেলপার টেস্ট করার জন্য: কীবোর্ডে 'r' চাপলে প্রগ্রেস বার বাড়বে
+    // ইউআরএল থেকে রেফারার আইডি নিয়ে চেক করবো
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrerId = urlParams.get('ref');
+
+    if (referrerId && referrerId !== userId) {
+      // নিশ্চিত করবো একই ব্রাউজারে একবার মাত্র ভিজিট গোনা হবে
+      if (!localStorage.getItem('refClicked_' + referrerId)) {
+        localStorage.setItem('refClicked_' + referrerId, 'true');
+        incrementProgress();
+      }
+    }
+
+    // পেজ লোড হলে আগে থেকে কৃত ক্লিক অনুসারে প্রগ্রেস দেখানো
+    window.onload = () => {
+      let clicks = parseInt(localStorage.getItem('refClicks')) || 0;
+      const progress = clicks * 5;
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = progress + '%';
+      progressBar.innerText = progress + '%';
+    };
+
+    // ডেভেলপার টেস্ট করার জন্য কীবোর্ডে 'r' চাপলে প্রগ্রেস বার বাড়বে
     document.addEventListener("keydown", (e) => {
-      if (e.key === "r") updateProgress();
+      if (e.key === "r") incrementProgress();
     });
   </script>
 </body>
