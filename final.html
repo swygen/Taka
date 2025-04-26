@@ -30,6 +30,10 @@
     h2 {
       color: #fbbf24;
       margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
     .info {
       text-align: left;
@@ -37,11 +41,14 @@
     }
     .info p {
       margin: 8px 0;
+      word-break: break-word;
     }
     .screenshot-img {
       width: 100%;
       border-radius: 10px;
       margin-top: 10px;
+      max-height: 300px;
+      object-fit: contain;
     }
     .serial-number {
       font-weight: bold;
@@ -58,6 +65,13 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    button .material-icons {
+      font-size: 20px;
     }
   </style>
 </head>
@@ -66,12 +80,14 @@
     <h2><span class="material-icons">receipt_long</span> আপনার গিভঅ্যাওয়ে রিসিপ্ট</h2>
     <div class="info" id="info-section"></div>
     <div class="serial-number" id="serial-number"></div>
-    <button onclick="downloadReceipt()">রিসিপ্ট ডাউনলোড করুন</button>
+    <button onclick="downloadReceipt()">
+      <span class="material-icons">download</span> রিসিপ্ট ডাউনলোড করুন
+    </button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    // লোকালস্টোরেজ থেকে তথ্য নিয়ে আসা
+    // লোকালস্টোরেজ থেকে ডাটা নাও, না থাকলে 'নেই' দেখাবে
     const info = {
       name: localStorage.getItem("form_name") || "নেই",
       email: localStorage.getItem("form_email") || "নেই",
@@ -80,29 +96,44 @@
       screenshotUrl: localStorage.getItem("form_screenshot") || ""
     };
 
-    // এলোমেলো সিরিয়াল নাম্বার জেনারেট করা
     const serial = Math.floor(100000 + Math.random() * 900000);
     document.getElementById("serial-number").innerText = "সিরিয়াল নাম্বার: #" + serial;
 
-    // তথ্য HTML এ প্রবেশ করানো
     const infoHtml = `
       <p><strong>নাম:</strong> ${info.name}</p>
       <p><strong>ইমেইল:</strong> ${info.email}</p>
       <p><strong>টেলিগ্রাম আইডি:</strong> ${info.telegram}</p>
       <p><strong>জেলা:</strong> ${info.district}</p>
       <p><strong>আপলোডকৃত স্ক্রিনশট:</strong></p>
-      ${info.screenshotUrl ? `<img src="${info.screenshotUrl}" class="screenshot-img" alt="স্ক্রিনশট" />` : "<p>কোন স্ক্রিনশট পাওয়া যায়নি।</p>"}
+      ${info.screenshotUrl ? `<img src="${info.screenshotUrl}" class="screenshot-img" alt="স্ক্রিনশট" crossorigin="anonymous" />` : `<p>কোনো স্ক্রিনশট পাওয়া যায়নি</p>`}
     `;
 
     document.getElementById("info-section").innerHTML = infoHtml;
 
-    // রিসিপ্ট ডাউনলোড ফাংশন (PNG ফরম্যাটে)
     function downloadReceipt() {
       const element = document.getElementById("receipt");
-      html2canvas(element).then(canvas => {
+      const img = element.querySelector(".screenshot-img");
+
+      if (img && !img.complete) {
+        // যদি ছবি পুরো লোড না হয়ে থাকে, লোডের জন্য অপেক্ষা করো
+        img.onload = () => {
+          takeScreenshot(element);
+        };
+        img.onerror = () => {
+          // ছবি লোড না হলে স্ক্রিনশট নেওয়া যাবে না, তাই নরমালি নাও
+          takeScreenshot(element);
+        }
+      } else {
+        takeScreenshot(element);
+      }
+    }
+
+    function takeScreenshot(element) {
+      // background কে সাদা রাখছি যাতে কালো ব্যাকগ্রাউন্ডের ওপর পরিষ্কার দেখায়
+      html2canvas(element, {backgroundColor: null, useCORS: true}).then(canvas => {
         const link = document.createElement('a');
         link.download = `giveaway_receipt_${serial}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL("image/png");
         link.click();
       });
     }
