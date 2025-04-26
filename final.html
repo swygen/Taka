@@ -71,6 +71,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
+    // লোকালস্টোরেজ থেকে তথ্য নিয়ে আসা
     const info = {
       name: localStorage.getItem("form_name") || "নেই",
       email: localStorage.getItem("form_email") || "নেই",
@@ -79,20 +80,23 @@
       screenshotUrl: localStorage.getItem("form_screenshot") || ""
     };
 
+    // এলোমেলো সিরিয়াল নাম্বার জেনারেট করা
     const serial = Math.floor(100000 + Math.random() * 900000);
     document.getElementById("serial-number").innerText = "সিরিয়াল নাম্বার: #" + serial;
 
+    // তথ্য HTML এ প্রবেশ করানো
     const infoHtml = `
       <p><strong>নাম:</strong> ${info.name}</p>
       <p><strong>ইমেইল:</strong> ${info.email}</p>
       <p><strong>টেলিগ্রাম আইডি:</strong> ${info.telegram}</p>
       <p><strong>জেলা:</strong> ${info.district}</p>
       <p><strong>আপলোডকৃত স্ক্রিনশট:</strong></p>
-      <img src="${info.screenshotUrl}" class="screenshot-img" alt="স্ক্রিনশট" />
+      ${info.screenshotUrl ? `<img src="${info.screenshotUrl}" class="screenshot-img" alt="স্ক্রিনশট" />` : "<p>কোন স্ক্রিনশট পাওয়া যায়নি।</p>"}
     `;
 
     document.getElementById("info-section").innerHTML = infoHtml;
 
+    // রিসিপ্ট ডাউনলোড ফাংশন (PNG ফরম্যাটে)
     function downloadReceipt() {
       const element = document.getElementById("receipt");
       html2canvas(element).then(canvas => {
