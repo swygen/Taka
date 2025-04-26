@@ -100,6 +100,187 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HGZY Giveaway Popup</title>
+  <!-- গুগল ফন্ট বাংলা -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Noto Sans Bengali', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f0f0;
+    }
+
+    /* Overlay */
+    #hgzy-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 99998;
+    }
+    #hgzy-popup-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Popup container */
+    #hgzy-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 400px;
+      max-width: 90vw;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fefefe;
+      border-radius: 20px;
+      box-shadow: 0 15px 45px rgba(26, 74, 147, 0.7);
+      padding: 28px 35px 35px 35px;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 99999;
+      font-weight: 500;
+      line-height: 1.6;
+      font-size: 17px;
+      font-family: 'Noto Sans Bengali', sans-serif;
+    }
+    #hgzy-popup.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Header */
+    #hgzy-popup .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+    #hgzy-popup .header .title {
+      font-weight: 900;
+      font-size: 24px;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #ffdd55;
+      text-shadow: 0 0 5px #ffdd55;
+    }
+    #hgzy-popup .header .title svg {
+      width: 34px;
+      height: 34px;
+      fill: #ffdd55;
+      filter: drop-shadow(0 0 6px #ffd700);
+    }
+
+    /* Close button */
+    #hgzy-popup .close-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+    }
+    #hgzy-popup .close-btn svg {
+      width: 26px;
+      height: 26px;
+      stroke: #fff;
+      stroke-width: 3;
+      transition: stroke 0.25s ease;
+    }
+    #hgzy-popup .close-btn:hover svg {
+      stroke: #ff4d4d;
+    }
+
+    /* Content */
+    #hgzy-popup .content strong {
+      font-weight: 700;
+      color: #fffacd;
+    }
+
+    /* Footer */
+    #hgzy-popup .footer {
+      margin-top: 26px;
+      font-style: italic;
+      font-weight: 700;
+      text-align: right;
+      color: #dcdcdc;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Overlay -->
+  <div id="hgzy-popup-overlay"></div>
+
+  <!-- Popup -->
+  <div id="hgzy-popup" role="dialog" aria-modal="true" aria-labelledby="hgzy-popup-title" aria-describedby="hgzy-popup-desc">
+    <div class="header">
+      <div class="title" id="hgzy-popup-title">
+        <!-- Premium Plus Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <circle cx="32" cy="32" r="30" stroke="#ffdd55" stroke-width="4" fill="none" />
+          <path d="M20 32h24M32 20v24" stroke="#ffdd55" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        HGZY FREE Giveaway
+      </div>
+      <button class="close-btn" aria-label="Close Popup" title="Close">
+        <!-- Cross Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="content" id="hgzy-popup-desc">
+      <p><strong>আসসালামুয়ালাইকুম!</strong></p>
+      <p>আপনাদের জন্য সুখবর! <br><strong>HGZY GAME</strong> এর পক্ষ থেকে একদম <strong>ফ্রি Giveaway</strong> চলছে, যা চলবে <strong>২৫ জুলাই ২০২৫</strong> পর্যন্ত।</p>
+      <p>এই দুর্দান্ত সুযোগ হাতছাড়া করবেন না! <br>দ্রুত আবেদন করুন এবং আপনার বন্ধুদের বেশি বেশি রেফার করে জেতার সম্ভাবনা বাড়িয়ে নিন।</p>
+    </div>
+    <div class="footer">
+      ধন্যবাদ,<br>
+      <strong>HGZY™ ORG</strong>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const popup = document.getElementById('hgzy-popup');
+      const overlay = document.getElementById('hgzy-popup-overlay');
+      const closeBtn = popup.querySelector('.close-btn');
+
+      function showPopup(){
+        popup.classList.add('show');
+        overlay.classList.add('show');
+      }
+      function hidePopup(){
+        popup.classList.remove('show');
+        overlay.classList.remove('show');
+      }
+
+      closeBtn.addEventListener('click', hidePopup);
+      overlay.addEventListener('click', hidePopup);
+
+      window.addEventListener('load', () => {
+        setTimeout(showPopup, 800);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && popup.classList.contains('show')){
+          hidePopup();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HGZY Game Offer</title>
