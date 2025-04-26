@@ -1,11 +1,86 @@
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>এক্সক্লুসিভ গিভঅ্যাওয়ে ফর্ম</title>
+
+  <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <!-- Firebase SDK & Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNMgOxSjhBQVHxDWbCkunQOAaIe7MKLgQ",
+      authDomain: "bonus-apply.firebaseapp.com",
+      projectId: "bonus-apply",
+      storageBucket: "bonus-apply.firebasestorage.app",
+      messagingSenderId: "313039289662",
+      appId: "1:313039289662:web:8116db3664e5b5cd34006f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.handleForm = async function handleForm(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const telegram = document.getElementById("telegram").value.trim();
+      const district = document.getElementById("district").value;
+      const screenshotFile = document.getElementById("screenshot").files[0];
+
+      if (!name || !email || !telegram || !district || !screenshotFile) {
+        alert("সব তথ্য পূরণ করা বাধ্যতামূলক!");
+        return;
+      }
+
+      // Upload to imgbb
+      const formData = new FormData();
+      formData.append("image", screenshotFile);
+      const imgbbKey = "f2b8b8a5ae7d16cfdf9049d56507049d"; // আপনার imgbb API key দিন
+
+      try {
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (!data.success) throw new Error("Image upload failed");
+
+        const screenshotUrl = data.data.url;
+
+        // Save to Firebase Firestore
+        await addDoc(collection(db, "submissions"), {
+          name,
+          email,
+          telegram,
+          district,
+          screenshotUrl,
+          submittedAt: new Date().toISOString(),
+        });
+
+        // Redirect to final page
+        window.location.href = "final.html";
+      } catch (error) {
+        alert("আপলোড বা ডাটাবেস সংরক্ষণে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
+        console.error(error);
+      }
+    };
+  </script>
+
   <style>
+    /* Reset & Basic */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
@@ -16,179 +91,249 @@
       align-items: center;
       padding: 20px;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
     .container {
       width: 100%;
-      max-width: 500px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 24px;
+      padding: 36px 30px 40px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     h2 {
-      font-size: 22px;
+      font-size: 24px;
+      font-weight: 700;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 36px;
+      color: #fbbf24; /* premium gold color */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    h2 .material-icons {
+      font-size: 28px;
       color: #fbbf24;
     }
+
+    form {
+      width: 100%;
+    }
+
     .form-group {
       position: relative;
-      margin-bottom: 25px;
+      margin-bottom: 28px;
     }
+
     .form-group i.material-icons {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 50%;
+      left: 16px;
+      transform: translateY(-50%);
       color: #cbd5e1;
+      font-size: 22px;
+      pointer-events: none;
     }
-    .form-group input,
-    .form-group select {
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    input[type="file"] {
       width: 100%;
-      height: 45px;
-      padding: 10px 15px 10px 40px;
+      height: 48px;
+      padding: 0 15px 0 48px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.15);
       border: none;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.1);
       color: white;
-      font-size: 15px;
-      transition: 0.3s;
-      box-sizing: border-box;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
     }
-    .form-group input[type="file"] {
-      height: 45px;
-      padding-left: 10px;
+
+    input[type="file"] {
+      padding-left: 15px;
+      cursor: pointer;
     }
-    .form-group input:focus,
-    .form-group select:focus {
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus,
+    input[type="file"]:focus {
       outline: none;
-      background-color: rgba(255,255,255,0.2);
+      background-color: rgba(255, 255, 255, 0.3);
     }
+
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 18px 18px;
+    }
+
     button {
       width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background: linear-gradient(to right, #10b981, #06b6d4);
+      padding: 14px;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 16px;
       border: none;
-      border-radius: 12px;
       color: white;
-      font-weight: bold;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      box-shadow: 0 8px 20px rgba(6, 182, 212, 0.6);
       cursor: pointer;
-      transition: 0.4s;
+      transition: background 0.3s ease;
     }
+
     button:hover {
-      background: linear-gradient(to right, #06b6d4, #0ea5e9);
+      background: linear-gradient(90deg, #06b6d4, #0ea5e9);
+      box-shadow: 0 10px 28px rgba(14, 165, 233, 0.8);
+    }
+
+    /* Responsive for smaller devices */
+    @media (max-width: 480px) {
+      .container {
+        padding: 28px 20px 32px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .form-group i.material-icons {
+        left: 12px;
+        font-size: 20px;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      select,
+      input[type="file"] {
+        height: 44px;
+        padding-left: 44px;
+        font-size: 14px;
+      }
+
+      button {
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 14px;
+      }
     }
   </style>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";const firebaseConfig = {
-  apiKey: "AIzaSyCNMgOxSjhBQVHxDWbCkunQOAaIe7MKLgQ",
-  authDomain: "bonus-apply.firebaseapp.com",
-  projectId: "bonus-apply",
-  storageBucket: "bonus-apply.firebasestorage.app",
-  messagingSenderId: "313039289662",
-  appId: "1:313039289662:web:8116db3664e5b5cd34006f"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.handleForm = async function handleForm(e) {
-  e.preventDefault();
-
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const telegram = document.getElementById("telegram").value.trim();
-  const district = document.getElementById("district").value;
-  const screenshotFile = document.getElementById("screenshot").files[0];
-
-  if (!name || !email || !telegram || !district || !screenshotFile) {
-    alert("সব তথ্য পূরণ করা বাধ্যতামূলক!");
-    return;
-  }
-
-  // Upload image to imgbb
-  const formData = new FormData();
-  formData.append("image", screenshotFile);
-  const imgbbKey = "f2b8b8a5ae7d16cfdf9049d56507049d";
-  try {
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, {
-      method: "POST",
-      body: formData
-    });
-    const data = await response.json();
-    if (!data.success) {
-      alert("ছবি আপলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
-      return;
-    }
-    const screenshotUrl = data.data.url;
-
-    // Save data to Firestore
-    await addDoc(collection(db, "submissions"), {
-      name,
-      email,
-      telegram,
-      district,
-      screenshotUrl,
-      submittedAt: new Date().toISOString()
-    });
-
-    // ... কোডের বাকি অংশ
-
-// Save data to localStorage for next page
-localStorage.setItem("form_name", name);
-localStorage.setItem("form_email", email);
-localStorage.setItem("form_telegram", telegram);
-localStorage.setItem("form_district", district);
-localStorage.setItem("form_screenshot", screenshotUrl);
-
-// Redirect to final page
-window.location.href = "final.html";
-  } catch (error) {
-    alert("সার্ভার সমস্যা হয়েছে। আবার চেষ্টা করুন।");
-    console.error(error);
-  }
-};
-
-  </script>
 </head>
 <body>
-  <div class="container">
-    <h2><span class="material-icons">stars</span> Complete This Step And Apply To Your Giveaway</h2>
-    <form onsubmit="handleForm(event)">
+  <div class="container" role="main">
+    <h2><span class="material-icons" aria-hidden="true">stars</span> Complete This Step And Apply To Your Giveaway</h2>
+    <form onsubmit="handleForm(event)" aria-label="Giveaway application form" novalidate>
       <div class="form-group">
-        <i class="material-icons">person</i>
-        <input type="text" id="name" placeholder="আপনার নাম" required />
+        <i class="material-icons" aria-hidden="true">person</i>
+        <input type="text" id="name" name="name" placeholder="আপনার নাম" required aria-required="true" autocomplete="name" />
       </div>
+
       <div class="form-group">
-        <i class="material-icons">email</i>
-        <input type="email" id="email" placeholder="ইমেইল" required />
+        <i class="material-icons" aria-hidden="true">email</i>
+        <input type="email" id="email" name="email" placeholder="ইমেইল" required aria-required="true" autocomplete="email" />
       </div>
+
       <div class="form-group">
-        <i class="material-icons">chat</i>
-        <input type="text" id="telegram" placeholder="টেলিগ্রাম আইডি" required />
+        <i class="material-icons" aria-hidden="true">chat</i>
+        <input type="text" id="telegram" name="telegram" placeholder="টেলিগ্রাম আইডি" required aria-required="true" autocomplete="off" />
       </div>
+
       <div class="form-group">
-        <i class="material-icons">location_on</i>
-        <select id="district" required>
-          <option value="">আপনার জেলা বাছাই করুন</option>
+        <i class="material-icons" aria-hidden="true">location_on</i>
+        <select id="district" name="district" required aria-required="true" >
           <option value="ঢাকা">ঢাকা</option>
-          <option value="চট্টগ্রাম">চট্টগ্রাম</option>
-          <option value="সিলেট">সিলেট</option>
-          <option value="রাজশাহী">রাজশাহী</option>
-          <option value="বরিশাল">বরিশাল</option>
-          <option value="খুলনা">খুলনা</option>
-          <option value="রংপুর">রংপুর</option>
-          <option value="ময়মনসিংহ">ময়মনসিংহ</option>
-        </select>
+<option value="ফরিদপুর">ফরিদপুর</option>
+<option value="গাজীপুর">গাজীপুর</option>
+<option value="গোপালগঞ্জ">গোপালগঞ্জ</option>
+<option value="কিশোরগঞ্জ">কিশোরগঞ্জ</option>
+<option value="মাদারীপুর">মাদারীপুর</option>
+<option value="মানিকগঞ্জ">মানিকগঞ্জ</option>
+<option value="মুন্সীগঞ্জ">মুন্সীগঞ্জ</option>
+<option value="নারায়ণগঞ্জ">নারায়ণগঞ্জ</option>
+<option value="নরসিংদী">নরসিংদী</option>
+<option value="রাজবাড়ী">রাজবাড়ী</option>
+<option value="শরীয়তপুর">শরীয়তপুর</option>
+<option value="টাঙ্গাইল">টাঙ্গাইল</option>
+
+<option value="চট্টগ্রাম">চট্টগ্রাম</option>
+<option value="বান্দরবান">বান্দরবান</option>
+<option value="ব্রাহ্মণবাড়িয়া">ব্রাহ্মণবাড়িয়া</option>
+<option value="চাঁদপুর">চাঁদপুর</option>
+<option value="কুমিল্লা">কুমিল্লা</option>
+<option value="কক্সবাজার">কক্সবাজার</option>
+<option value="ফেনী">ফেনী</option>
+<option value="খাগড়াছড়ি">খাগড়াছড়ি</option>
+<option value="লক্ষ্মীপুর">লক্ষ্মীপুর</option>
+<option value="নোয়াখালী">নোয়াখালী</option>
+<option value="রাঙ্গামাটি">রাঙ্গামাটি</option>
+
+<option value="সিলেট">সিলেট</option>
+<option value="হবিগঞ্জ">হবিগঞ্জ</option>
+<option value="মৌলভীবাজার">মৌলভীবাজার</option>
+<option value="সুনামগঞ্জ">সুনামগঞ্জ</option>
+
+<option value="রাজশাহী">রাজশাহী</option>
+<option value="বগুড়া">বগুড়া</option>
+<option value="জয়পুরহাট">জয়পুরহাট</option>
+<option value="নওগাঁ">নওগাঁ</option>
+<option value="নাটোর">নাটোর</option>
+<option value="চাঁপাইনবাবগঞ্জ">চাঁপাইনবাবগঞ্জ</option>
+<option value="পাবনা">পাবনা</option>
+<option value="সিরাজগঞ্জ">সিরাজগঞ্জ</option>
+
+<option value="বরিশাল">বরিশাল</option>
+<option value="বরগুনা">বরগুনা</option>
+<option value="ভোলা">ভোলা</option>
+<option value="ঝালকাঠি">ঝালকাঠি</option>
+<option value="পটুয়াখালী">পটুয়াখালী</option>
+<option value="পিরোজপুর">পিরোজপুর</option>
+
+<option value="খুলনা">খুলনা</option>
+<option value="বাগেরহাট">বাগেরহাট</option>
+<option value="চুয়াডাঙ্গা">চুয়াডাঙ্গা</option>
+<option value="যশোর">যশোর</option>
+<option value="ঝিনাইদহ">ঝিনাইদহ</option>
+<option value="কুষ্টিয়া">কুষ্টিয়া</option>
+<option value="মাগুরা">মাগুরা</option>
+<option value="মেহেরপুর">মেহেরপুর</option>
+<option value="নড়াইল">নড়াইল</option>
+<option value="সাতক্ষীরা">সাতক্ষীরা</option>
+
+<option value="রংপুর">রংপুর</option>
+<option value="কুড়িগ্রাম">কুড়িগ্রাম</option>
+<option value="লালমনিরহাট">লালমনিরহাট</option>
+<option value="নীলফামারী">নীলফামারী</option>
+<option value="পঞ্চগড়">পঞ্চগড়</option>
+<option value="ঠাকুরগাঁও">ঠাকুরগাঁও</option>
+<option value="দিনাজপুর">দিনাজপুর</option>
+<option value="গাইবান্ধা">গাইবান্ধা</option>
+
+<option value="ময়মনসিংহ">ময়মনসিংহ</option>
+<option value="জামালপুর">জামালপুর</option>
+<option value="নেত্রকোণা">নেত্রকোণা</option>
+<option value="শেরপুর">শেরপুর</option>
       </div>
+
       <div class="form-group">
-        <i class="material-icons">image</i>
-        <input type="file" id="screenshot" accept="image/*" required />
+        <i class="material-icons" aria-hidden="true">image</i>
+        <input type="file" id="screenshot" name="screenshot" accept="image/*" required aria-required="true" />
       </div>
-      <button type="submit">Submit</button>
+
+      <button type="submit" aria-label="Submit form">Submit</button>
     </form>
   </div>
 </body>
-</html> 
+</html>
