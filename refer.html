@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>প্রিমিয়াম রেফারেল প্রোগ্রাম</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <script type="module" src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"></script>
   <style>
     body {
@@ -16,10 +17,11 @@
     }
     .container {
       max-width: 500px;
+      max-width: 90vw;
       margin: auto;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 20px;
-      padding: 30px;
+      padding: 30px 20px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
     }
@@ -41,6 +43,14 @@
       border: none;
       border-radius: 10px;
       font-size: 1rem;
+      user-select: all;
+      cursor: pointer;
+      background-color: rgba(255 255 255 / 0.2);
+      color: white;
+    }
+    input:focus {
+      outline: none;
+      background-color: rgba(255 255 255 / 0.3);
     }
     .button-group {
       display: flex;
@@ -51,9 +61,10 @@
     }
     .button {
       flex: 1 1 45%;
+      min-width: 140px;
       background-color: #ffffff;
       color: #2a5298;
-      padding: 10px;
+      padding: 10px 0;
       font-size: 1rem;
       border: none;
       border-radius: 10px;
@@ -63,6 +74,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      user-select: none;
     }
     .button:hover {
       background-color: #e0e0e0;
@@ -84,6 +96,7 @@
       font-weight: bold;
       line-height: 30px;
       transition: width 0.5s ease-in-out;
+      user-select: none;
     }
     .notice {
       background-color: #ffeaa7;
@@ -102,7 +115,7 @@
       <dotlottie-player src="https://lottie.host/12a60984-e31b-437d-addb-481e3edd451f/pFIA3tjKm8.lottie" background="transparent" speed="1" style="width: 200px; height: 200px" loop autoplay></dotlottie-player>
     </div>
     <div class="title">HGZY রেফারেল প্রোগ্রাম</div>
-    <input type="text" id="refLink" readonly />
+    <input type="text" id="refLink" readonly title="লিংকটি কপি করতে এখানে ক্লিক করুন" onclick="this.select()" />
     <div class="button-group">
       <button class="button" onclick="shareLink('facebook')"><i class="bi bi-facebook"></i> Facebook</button>
       <button class="button" onclick="shareLink('whatsapp')"><i class="bi bi-whatsapp"></i> WhatsApp</button>
@@ -126,7 +139,8 @@
     }
 
     const referralLink = `${window.location.origin}?ref=${userId}`;
-    document.getElementById("refLink").value = referralLink;
+    const refInput = document.getElementById("refLink");
+    refInput.value = referralLink;
 
     function shareLink(platform) {
       let shareURL = "";
